@@ -23,6 +23,8 @@ class BoxingHomePage extends StatefulWidget {
   State<BoxingHomePage> createState() => _BoxingHomePageState();
 }
 
+const double _maxAppWidth = 460;
+
 class _BoxingHomePageState extends State<BoxingHomePage> {
   final _generator = BoxingComboGenerator();
   final _emailController = TextEditingController();
@@ -397,33 +399,47 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
-          child: PageView(
-            controller: _pageController,
-            onPageChanged: (index) => setState(() => _selectedTab = index),
-            children: pages,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: _maxAppWidth),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) => setState(() => _selectedTab = index),
+                children: pages,
+              ),
+            ),
           ),
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedTab,
-        onDestinationSelected: _selectTab,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.sports_mma_rounded),
-            label: 'Training',
+      bottomNavigationBar: Center(
+        heightFactor: 1,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: _maxAppWidth),
+          child: NavigationBar(
+            selectedIndex: _selectedTab,
+            onDestinationSelected: _selectTab,
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(Icons.sports_mma_rounded),
+                label: 'Training',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.tune_rounded),
+                label: 'Setup',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.person_rounded),
+                label: 'Account',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.insights_rounded),
+                label: 'Stats',
+              ),
+            ],
           ),
-          NavigationDestination(icon: Icon(Icons.tune_rounded), label: 'Setup'),
-          NavigationDestination(
-            icon: Icon(Icons.person_rounded),
-            label: 'Account',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.insights_rounded),
-            label: 'Stats',
-          ),
-        ],
+        ),
       ),
     );
   }
