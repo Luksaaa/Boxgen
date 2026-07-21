@@ -23,6 +23,7 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
   final _generator = BoxingComboGenerator();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _pageController = PageController();
 
   Timer? _timer;
   TrainingMode _mode = TrainingMode.combo;
@@ -53,6 +54,7 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
   @override
   void dispose() {
     _timer?.cancel();
+    _pageController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -281,6 +283,15 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  void _selectTab(int index) {
+    setState(() => _selectedTab = index);
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 240),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final pages = [
@@ -294,12 +305,16 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(14, 14, 14, 0),
-          child: IndexedStack(index: _selectedTab, children: pages),
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (index) => setState(() => _selectedTab = index),
+            children: pages,
+          ),
         ),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedTab,
-        onDestinationSelected: (index) => setState(() => _selectedTab = index),
+        onDestinationSelected: _selectTab,
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.sports_mma_rounded),
