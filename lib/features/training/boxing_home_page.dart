@@ -1,11 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 import '../../models/defense_cue_set.dart';
 import '../../models/generated_drill.dart';
 import '../../models/training_mode.dart';
+import '../../models/training_settings.dart';
 import '../../services/boxing_combo_generator.dart';
+import '../../services/training_settings_storage.dart';
 import 'widgets/account_panel.dart';
 import 'widgets/setup_panel.dart';
 import 'widgets/stats_panel.dart';
@@ -24,6 +28,7 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _pageController = PageController();
+  final _tts = FlutterTts();
 
   Timer? _timer;
   TrainingMode _mode = TrainingMode.combo;
@@ -48,12 +53,14 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
   @override
   void initState() {
     super.initState();
-    _generateNext();
+    _currentDrill = _createDrill();
+    _loadSavedSettings();
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _tts.stop();
     _pageController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -109,13 +116,17 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
     });
   }
 
-  void _generateNext({bool updateState = true}) {
-    final drill = _generator.generate(
+  GeneratedDrill _createDrill() {
+    return _generator.generate(
       mode: _mode,
       cueSet: _cueSet,
       minLength: _comboMinLength,
       maxLength: _comboMaxLength,
     );
+  }
+
+  void _generateNext({bool updateState = true}) {
+    final drill = _createDrill();
 
     void apply() {
       if (!_currentDrill.isEmpty) {
@@ -134,16 +145,12 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
     } else {
       apply();
     }
+    _playFeedback(drill);
   }
 
   void _resetSessionForSettingsChange() {
     _timer?.cancel();
-    final drill = _generator.generate(
-      mode: _mode,
-      cueSet: _cueSet,
-      minLength: _comboMinLength,
-      maxLength: _comboMaxLength,
-    );
+    final drill = _createDrill();
 
     setState(() {
       _isRunning = false;
@@ -155,6 +162,86 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
       _sessionSeconds = 0;
       _pauseCount = 0;
     });
+  }
+
+  Future<void> _loadSavedSettings() async {
+    final settings = await TrainingSettingsStorage.load();
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _mode = settings.mode;
+      _cueSet = settings.cueSet;
+      _refreshSeconds = settings.refreshSeconds;
+      _comboMinLength = settings.comboMinLength;
+      _comboMaxLength = settings.comboMaxLength;
+      _soundEnabled = settings.soundEnabled;
+      _voiceEnabled = settings.voiceEnabled;
+      _secondsLeft = settings.refreshSeconds;
+      _currentDrill = _createDrill();
+      _history.clear();
+      _generatedCount = 0;
+      _sessionSeconds = 0;
+      _pauseCount = 0;
+    });
+  }
+
+  Future<void> _saveSettings() {
+    return TrainingSettingsStorage.save(
+      TrainingSettings(
+        mode: _mode,
+        cueSet: _cueSet,
+        refreshSeconds: _refreshSeconds,
+        comboMinLength: _comboMinLength,
+        comboMaxLength: _comboMaxLength,
+        soundEnabled: _soundEnabled,
+        voiceEnabled: _voiceEnabled,
+      ),
+    );
+  }
+
+  Future<void> _applySettingsChange(VoidCallback change) async {
+    setState(change);
+    _resetSessionForSettingsChange();
+    await _saveSettings();
+  }
+
+  void _changeSound(bool value) {
+    _applySettingsChange(() => _soundEnabled = value).then((_) {
+      if (value) {
+        SystemSound.play(SystemSoundType.click);
+      }
+    });
+  }
+
+  void _changeVoice(bool value) {
+    _applySettingsChange(() => _voiceEnabled = value).then((_) {
+      if (value) {
+        _playFeedback(_currentDrill);
+      }
+    });
+  }
+
+  Future<void> _playFeedback(GeneratedDrill drill) async {
+    if (_soundEnabled) {
+      await SystemSound.play(SystemSoundType.click);
+    }
+
+    if (_voiceEnabled) {
+      await _tts.stop();
+      await _tts.setSpeechRate(0.48);
+      await _tts.setPitch(0.9);
+      await _tts.speak(_spokenDrill(drill));
+    }
+  }
+
+  String _spokenDrill(GeneratedDrill drill) {
+    return drill.display
+        .replaceAll('-', ' ')
+        .replaceAll('[', '')
+        .replaceAll(']', '')
+        .replaceAll('&', 'and');
   }
 
   Future<void> _openModeSelector() async {
@@ -171,7 +258,7 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
       return;
     }
 
-    setState(() {
+    await _applySettingsChange(() {
       _mode = selected;
       _refreshSeconds = selected.optimalSeconds;
       _secondsLeft = _refreshSeconds;
@@ -182,7 +269,6 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
         _cueSet = DefenseCueSet.common;
       }
     });
-    _resetSessionForSettingsChange();
   }
 
   Future<void> _openTempoSelector() async {
@@ -202,11 +288,10 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
       return;
     }
 
-    setState(() {
+    await _applySettingsChange(() {
       _refreshSeconds = selected;
       _secondsLeft = selected;
     });
-    _resetSessionForSettingsChange();
   }
 
   Future<void> _openLengthSelector() async {
@@ -237,11 +322,10 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
       return;
     }
 
-    setState(() {
+    await _applySettingsChange(() {
       _comboMinLength = selected.start.round();
       _comboMaxLength = selected.end.round();
     });
-    _resetSessionForSettingsChange();
   }
 
   Future<void> _openCueSelector() async {
@@ -258,7 +342,7 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
       return;
     }
 
-    setState(() {
+    await _applySettingsChange(() {
       _cueSet = selected;
       if (_mode == TrainingMode.normal || _mode == TrainingMode.combo) {
         _mode = selected == DefenseCueSet.common
@@ -268,7 +352,6 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
         _secondsLeft = _refreshSeconds;
       }
     });
-    _resetSessionForSettingsChange();
   }
 
   void _toggleSignedIn() {
@@ -286,17 +369,6 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
       _displayName = email.isEmpty ? 'Firebase user' : email;
     });
     _showMessage('Login UI is ready. Connect Firebase Auth to make it real.');
-  }
-
-  void _saveForAccount() {
-    if (!_isSignedIn) {
-      _showMessage(
-        'Login is required to save settings, custom cues, and stats.',
-      );
-      return;
-    }
-
-    _showMessage('Firebase save hook ready: write this state to users/{uid}.');
   }
 
   void _showMessage(String message) {
@@ -359,17 +431,15 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
   Widget _buildTrainingPage() {
     return TrainingPanel(
       currentDrill: _currentDrill,
-      mode: _mode,
       refreshSeconds: _refreshSeconds,
       secondsLeft: _secondsLeft,
       isRunning: _isRunning,
       isPaused: _isPaused,
-      generatedCount: _generatedCount,
-      sessionSeconds: _sessionSeconds,
       onStart: _startTraining,
       onPause: _togglePause,
       onNext: _generateNext,
       onStop: _stopTraining,
+      onReset: _resetSessionForSettingsChange,
     );
   }
 
@@ -386,15 +456,8 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
       onTempoTap: _openTempoSelector,
       onLengthTap: _openLengthSelector,
       onCueTap: _openCueSelector,
-      onSoundChanged: (value) {
-        setState(() => _soundEnabled = value);
-        _resetSessionForSettingsChange();
-      },
-      onVoiceChanged: (value) {
-        setState(() => _voiceEnabled = value);
-        _resetSessionForSettingsChange();
-      },
-      onSavePressed: _saveForAccount,
+      onSoundChanged: _changeSound,
+      onVoiceChanged: _changeVoice,
     );
   }
 

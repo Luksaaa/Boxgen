@@ -21,7 +21,6 @@ class SetupPanel extends StatelessWidget {
     required this.onCueTap,
     required this.onSoundChanged,
     required this.onVoiceChanged,
-    required this.onSavePressed,
   });
 
   final TrainingMode mode;
@@ -37,7 +36,6 @@ class SetupPanel extends StatelessWidget {
   final VoidCallback onCueTap;
   final ValueChanged<bool> onSoundChanged;
   final ValueChanged<bool> onVoiceChanged;
-  final VoidCallback onSavePressed;
 
   @override
   Widget build(BuildContext context) {
@@ -45,15 +43,7 @@ class SetupPanel extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          SectionTitle(
-            icon: Icons.tune_rounded,
-            title: 'Setup',
-            action: TextButton.icon(
-              onPressed: onSavePressed,
-              icon: const Icon(Icons.cloud_upload_rounded, size: 18),
-              label: const Text('Save'),
-            ),
-          ),
+          const SectionTitle(icon: Icons.tune_rounded, title: 'Setup'),
           const SizedBox(height: 12),
           SelectorRow(
             icon: mode.icon,

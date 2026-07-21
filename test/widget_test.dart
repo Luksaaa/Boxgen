@@ -11,9 +11,9 @@ void main() {
 
     await tester.pumpWidget(const BoxgenApp());
 
-    expect(find.text('BOXGEN'), findsOneWidget);
     expect(find.text('Start'), findsOneWidget);
     expect(find.byIcon(Icons.skip_next_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.restart_alt_rounded), findsOneWidget);
 
     await tester.tap(find.text('Setup'));
     await tester.pumpAndSettle();

@@ -2,39 +2,33 @@ import 'package:flutter/material.dart';
 
 import '../../../app/app_colors.dart';
 import '../../../models/generated_drill.dart';
-import '../../../models/training_mode.dart';
-import '../../../utils/format_duration.dart';
 import 'training_controls.dart';
 
 class TrainingPanel extends StatelessWidget {
   const TrainingPanel({
     super.key,
     required this.currentDrill,
-    required this.mode,
     required this.refreshSeconds,
     required this.secondsLeft,
     required this.isRunning,
     required this.isPaused,
-    required this.generatedCount,
-    required this.sessionSeconds,
     required this.onStart,
     required this.onPause,
     required this.onNext,
     required this.onStop,
+    required this.onReset,
   });
 
   final GeneratedDrill currentDrill;
-  final TrainingMode mode;
   final int refreshSeconds;
   final int secondsLeft;
   final bool isRunning;
   final bool isPaused;
-  final int generatedCount;
-  final int sessionSeconds;
   final VoidCallback onStart;
   final VoidCallback onPause;
   final VoidCallback onNext;
   final VoidCallback onStop;
+  final VoidCallback onReset;
 
   @override
   Widget build(BuildContext context) {
@@ -52,39 +46,7 @@ class TrainingPanel extends StatelessWidget {
           children: [
             Row(
               children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: const BoxDecoration(
-                    color: AppColors.cardActive,
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                  ),
-                  child: Icon(mode.icon, color: AppColors.primaryStrong),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'BOXGEN',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primaryStrong,
-                        ),
-                      ),
-                      Text(
-                        mode.description,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                const Spacer(),
                 TimerPill(secondsLeft: secondsLeft, isPaused: isPaused),
               ],
             ),
@@ -178,24 +140,15 @@ class TrainingPanel extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 IconActionButton(
+                  icon: Icons.restart_alt_rounded,
+                  tooltip: 'Reset session',
+                  onPressed: onReset,
+                ),
+                const SizedBox(width: 10),
+                IconActionButton(
                   icon: Icons.stop_rounded,
                   tooltip: 'Stop',
                   onPressed: onStop,
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Row(
-              children: [
-                Expanded(
-                  child: MetricTile(label: 'Combos', value: '$generatedCount'),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: MetricTile(
-                    label: 'Time',
-                    value: formatDuration(sessionSeconds),
-                  ),
                 ),
               ],
             ),
