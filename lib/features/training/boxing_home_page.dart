@@ -6,7 +6,9 @@ import '../../models/defense_cue_set.dart';
 import '../../models/generated_drill.dart';
 import '../../models/training_mode.dart';
 import '../../services/boxing_combo_generator.dart';
-import 'widgets/control_panel.dart';
+import 'widgets/account_panel.dart';
+import 'widgets/setup_panel.dart';
+import 'widgets/stats_panel.dart';
 import 'widgets/training_panel.dart';
 import 'widgets/training_selector.dart';
 
@@ -35,6 +37,7 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
   bool _voiceEnabled = false;
   bool _isSignedIn = false;
   String _displayName = 'Account';
+  int _selectedTab = 0;
   GeneratedDrill _currentDrill = GeneratedDrill.empty();
   final List<GeneratedDrill> _history = [];
   int _generatedCount = 0;
@@ -280,76 +283,94 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final pages = [
+      _buildTrainingPage(),
+      _buildSetupPage(),
+      _buildAccountPage(),
+      _buildStatsPage(),
+    ];
+
     return Scaffold(
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final wide = constraints.maxWidth >= 880;
-            final trainingPanel = TrainingPanel(
-              currentDrill: _currentDrill,
-              mode: _mode,
-              refreshSeconds: _refreshSeconds,
-              secondsLeft: _secondsLeft,
-              isRunning: _isRunning,
-              isPaused: _isPaused,
-              generatedCount: _generatedCount,
-              sessionSeconds: _sessionSeconds,
-              onStart: _startTraining,
-              onPause: _togglePause,
-              onNext: _generateNext,
-              onStop: _stopTraining,
-            );
-            final controlPanel = ControlPanel(
-              mode: _mode,
-              cueSet: _cueSet,
-              refreshSeconds: _refreshSeconds,
-              comboMinLength: _comboMinLength,
-              comboMaxLength: _comboMaxLength,
-              soundEnabled: _soundEnabled,
-              voiceEnabled: _voiceEnabled,
-              isSignedIn: _isSignedIn,
-              displayName: _displayName,
-              emailController: _emailController,
-              passwordController: _passwordController,
-              generatedCount: _generatedCount,
-              sessionSeconds: _sessionSeconds,
-              pauseCount: _pauseCount,
-              history: _history,
-              onModeTap: _openModeSelector,
-              onTempoTap: _openTempoSelector,
-              onLengthTap: _openLengthSelector,
-              onCueTap: _openCueSelector,
-              onSoundChanged: (value) => setState(() => _soundEnabled = value),
-              onVoiceChanged: (value) => setState(() => _voiceEnabled = value),
-              onAuthPressed: _toggleSignedIn,
-              onSavePressed: _saveForAccount,
-            );
-
-            if (wide) {
-              return Padding(
-                padding: const EdgeInsets.all(18),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(flex: 7, child: trainingPanel),
-                    const SizedBox(width: 16),
-                    Expanded(flex: 4, child: controlPanel),
-                  ],
-                ),
-              );
-            }
-
-            return ListView(
-              padding: const EdgeInsets.all(14),
-              children: [
-                SizedBox(height: 620, child: trainingPanel),
-                const SizedBox(height: 16),
-                SizedBox(height: 760, child: controlPanel),
-              ],
-            );
-          },
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 14, 14, 0),
+          child: IndexedStack(index: _selectedTab, children: pages),
         ),
       ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedTab,
+        onDestinationSelected: (index) => setState(() => _selectedTab = index),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.sports_mma_rounded),
+            label: 'Training',
+          ),
+          NavigationDestination(icon: Icon(Icons.tune_rounded), label: 'Setup'),
+          NavigationDestination(
+            icon: Icon(Icons.person_rounded),
+            label: 'Account',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.insights_rounded),
+            label: 'Stats',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTrainingPage() {
+    return TrainingPanel(
+      currentDrill: _currentDrill,
+      mode: _mode,
+      refreshSeconds: _refreshSeconds,
+      secondsLeft: _secondsLeft,
+      isRunning: _isRunning,
+      isPaused: _isPaused,
+      generatedCount: _generatedCount,
+      sessionSeconds: _sessionSeconds,
+      onStart: _startTraining,
+      onPause: _togglePause,
+      onNext: _generateNext,
+      onStop: _stopTraining,
+    );
+  }
+
+  Widget _buildSetupPage() {
+    return SetupPanel(
+      mode: _mode,
+      cueSet: _cueSet,
+      refreshSeconds: _refreshSeconds,
+      comboMinLength: _comboMinLength,
+      comboMaxLength: _comboMaxLength,
+      soundEnabled: _soundEnabled,
+      voiceEnabled: _voiceEnabled,
+      onModeTap: _openModeSelector,
+      onTempoTap: _openTempoSelector,
+      onLengthTap: _openLengthSelector,
+      onCueTap: _openCueSelector,
+      onSoundChanged: (value) => setState(() => _soundEnabled = value),
+      onVoiceChanged: (value) => setState(() => _voiceEnabled = value),
+      onSavePressed: _saveForAccount,
+    );
+  }
+
+  Widget _buildAccountPage() {
+    return AccountPanel(
+      isSignedIn: _isSignedIn,
+      displayName: _displayName,
+      emailController: _emailController,
+      passwordController: _passwordController,
+      onAuthPressed: _toggleSignedIn,
+    );
+  }
+
+  Widget _buildStatsPage() {
+    return StatsPanel(
+      generatedCount: _generatedCount,
+      sessionSeconds: _sessionSeconds,
+      pauseCount: _pauseCount,
+      history: _history,
     );
   }
 }
