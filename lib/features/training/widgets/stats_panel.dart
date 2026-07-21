@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/app_colors.dart';
 import '../../../models/generated_drill.dart';
 import '../../../utils/format_duration.dart';
 import 'training_controls.dart';
@@ -22,7 +23,7 @@ class StatsPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: const BoxDecoration(
-        color: Color(0xFF1D1319),
+        color: AppColors.surfaceHigh,
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       child: ListView(
@@ -70,12 +71,12 @@ class _HistoryRow extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: const BoxDecoration(
-        color: Color(0xFF281922),
+        color: AppColors.card,
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.sports_mma_rounded, color: Color(0xFFFFB0CB)),
+          const Icon(Icons.sports_mma_rounded, color: AppColors.primary),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -99,12 +100,15 @@ class _EmptyHistory extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: const BoxDecoration(
-        color: Color(0xFF281922),
+        color: AppColors.card,
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       child: const Text(
         'History appears after the next generated combo.',
-        style: TextStyle(color: Color(0xFFBDAAB3), fontWeight: FontWeight.w700),
+        style: TextStyle(
+          color: AppColors.textMuted,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }

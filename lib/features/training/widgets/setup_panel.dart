@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/app_colors.dart';
 import '../../../models/defense_cue_set.dart';
 import '../../../models/training_mode.dart';
 import 'training_controls.dart';
@@ -106,7 +107,7 @@ class _TabSurface extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: const BoxDecoration(
-        color: Color(0xFF1D1319),
+        color: AppColors.surfaceHigh,
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       child: child,

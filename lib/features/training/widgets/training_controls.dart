@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/app_colors.dart';
+
 class SelectorRow extends StatelessWidget {
   const SelectorRow({
     super.key,
@@ -19,7 +21,7 @@ class SelectorRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Material(
-        color: const Color(0xFF281922),
+        color: AppColors.card,
         borderRadius: const BorderRadius.all(Radius.circular(8)),
         child: InkWell(
           borderRadius: const BorderRadius.all(Radius.circular(8)),
@@ -29,7 +31,7 @@ class SelectorRow extends StatelessWidget {
             child: Row(
               children: [
                 const SizedBox(width: 12),
-                Icon(icon, color: const Color(0xFFFFB0CB)),
+                Icon(icon, color: AppColors.primary),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -40,12 +42,15 @@ class SelectorRow extends StatelessWidget {
                 Text(
                   value,
                   style: const TextStyle(
-                    color: Color(0xFFE6D3DC),
+                    color: AppColors.text,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Icon(Icons.expand_more_rounded, color: Color(0xFFBDAAB3)),
+                const Icon(
+                  Icons.expand_more_rounded,
+                  color: AppColors.textMuted,
+                ),
                 const SizedBox(width: 8),
               ],
             ),
@@ -77,13 +82,13 @@ class SwitchRow extends StatelessWidget {
       child: Container(
         height: 58,
         decoration: const BoxDecoration(
-          color: Color(0xFF281922),
+          color: AppColors.card,
           borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
         child: Row(
           children: [
             const SizedBox(width: 12),
-            Icon(icon, color: const Color(0xFFFFB0CB)),
+            Icon(icon, color: AppColors.primary),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -116,7 +121,7 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: const Color(0xFFFFB0CB)),
+        Icon(icon, size: 18, color: AppColors.primary),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
@@ -142,7 +147,7 @@ class MetricTile extends StatelessWidget {
       height: 70,
       padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: const BoxDecoration(
-        color: Color(0xFF281922),
+        color: AppColors.card,
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       child: Column(
@@ -153,7 +158,7 @@ class MetricTile extends StatelessWidget {
             label,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              color: Color(0xFFBDAAB3),
+              color: AppColors.textMuted,
               fontSize: 12,
               fontWeight: FontWeight.w700,
             ),
@@ -188,7 +193,7 @@ class TimerPill extends StatelessWidget {
       height: 44,
       padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: const BoxDecoration(
-        color: Color(0xFF281922),
+        color: AppColors.card,
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       child: Row(
@@ -196,7 +201,7 @@ class TimerPill extends StatelessWidget {
         children: [
           Icon(
             isPaused ? Icons.pause_rounded : Icons.timer_rounded,
-            color: const Color(0xFFFFB0CB),
+            color: AppColors.primary,
           ),
           const SizedBox(width: 8),
           Text(

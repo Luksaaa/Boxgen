@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/app_colors.dart';
 import '../../../models/generated_drill.dart';
 import '../../../models/training_mode.dart';
 import '../../../utils/format_duration.dart';
@@ -41,7 +42,7 @@ class TrainingPanel extends StatelessWidget {
 
     return DecoratedBox(
       decoration: const BoxDecoration(
-        color: Color(0xFF160F14),
+        color: AppColors.surface,
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       child: Padding(
@@ -55,10 +56,10 @@ class TrainingPanel extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: const BoxDecoration(
-                    color: Color(0xFF3D1F2B),
+                    color: AppColors.cardActive,
                     borderRadius: BorderRadius.all(Radius.circular(8)),
                   ),
-                  child: Icon(mode.icon, color: const Color(0xFFFFB0CB)),
+                  child: Icon(mode.icon, color: AppColors.primaryStrong),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -70,7 +71,7 @@ class TrainingPanel extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFFFFB0CB),
+                          color: AppColors.primaryStrong,
                         ),
                       ),
                       Text(
@@ -91,7 +92,7 @@ class TrainingPanel extends StatelessWidget {
             Expanded(
               child: Container(
                 decoration: const BoxDecoration(
-                  color: Color(0xFF21151D),
+                  color: AppColors.surfaceHigh,
                   borderRadius: BorderRadius.all(Radius.circular(8)),
                 ),
                 padding: const EdgeInsets.all(20),
@@ -102,7 +103,7 @@ class TrainingPanel extends StatelessWidget {
                       currentDrill.title,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        color: Color(0xFFBDAAB3),
+                        color: AppColors.textMuted,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
@@ -129,14 +130,14 @@ class TrainingPanel extends StatelessWidget {
                           vertical: 12,
                         ),
                         decoration: const BoxDecoration(
-                          color: Color(0xFF43202D),
+                          color: AppColors.cardActive,
                           borderRadius: BorderRadius.all(Radius.circular(8)),
                         ),
                         child: Text(
                           currentDrill.cue,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            color: Color(0xFFFFD7E6),
+                            color: AppColors.text,
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
                           ),
@@ -153,8 +154,8 @@ class TrainingPanel extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: progress,
                 minHeight: 8,
-                backgroundColor: const Color(0xFF30212A),
-                valueColor: const AlwaysStoppedAnimation(Color(0xFFFF9BC0)),
+                backgroundColor: AppColors.progressTrack,
+                valueColor: const AlwaysStoppedAnimation(AppColors.primary),
               ),
             ),
             const SizedBox(height: 14),

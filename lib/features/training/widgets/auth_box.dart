@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/app_colors.dart';
+
 class AuthBox extends StatelessWidget {
   const AuthBox({
     super.key,
@@ -22,12 +24,12 @@ class AuthBox extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.all(12),
         decoration: const BoxDecoration(
-          color: Color(0xFF281922),
+          color: AppColors.card,
           borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
         child: Row(
           children: [
-            const Icon(Icons.verified_user_rounded, color: Color(0xFFFFB0CB)),
+            const Icon(Icons.verified_user_rounded, color: AppColors.primary),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -45,7 +47,7 @@ class AuthBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: const BoxDecoration(
-        color: Color(0xFF281922),
+        color: AppColors.card,
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       child: Column(

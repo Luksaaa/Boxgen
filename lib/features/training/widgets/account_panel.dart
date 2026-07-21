@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/app_colors.dart';
 import 'auth_box.dart';
 import 'training_controls.dart';
 
@@ -23,7 +24,7 @@ class AccountPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: const BoxDecoration(
-        color: Color(0xFF1D1319),
+        color: AppColors.surfaceHigh,
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       child: ListView(
@@ -42,13 +43,13 @@ class AccountPanel extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: const BoxDecoration(
-              color: Color(0xFF281922),
+              color: AppColors.card,
               borderRadius: BorderRadius.all(Radius.circular(8)),
             ),
             child: const Text(
               'Saving settings, custom cues, and training stats requires login.',
               style: TextStyle(
-                color: Color(0xFFBDAAB3),
+                color: AppColors.textMuted,
                 fontWeight: FontWeight.w700,
                 height: 1.35,
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'app_colors.dart';
 import '../features/training/boxing_home_page.dart';
 
 class BoxgenApp extends StatelessWidget {
@@ -7,26 +8,24 @@ class BoxgenApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const background = Color(0xFF130D11);
-    const surface = Color(0xFF20141B);
-    const primary = Color(0xFFFF9BC0);
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Boxgen',
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: background,
+        scaffoldBackgroundColor: AppColors.background,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: primary,
+          seedColor: AppColors.primary,
           brightness: Brightness.dark,
-          surface: surface,
+          primary: AppColors.primary,
+          onPrimary: AppColors.onPrimary,
+          surface: AppColors.surface,
         ),
         fontFamily: 'Arial',
         useMaterial3: true,
         snackBarTheme: const SnackBarThemeData(
           behavior: SnackBarBehavior.floating,
-          backgroundColor: Color(0xFF40202D),
+          backgroundColor: AppColors.card,
           contentTextStyle: TextStyle(color: Colors.white),
         ),
       ),

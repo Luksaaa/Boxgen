@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/app_colors.dart';
+
 Future<T?> showTrainingSelector<T>({
   required BuildContext context,
   required String title,
@@ -75,7 +77,7 @@ class _TrainingSelectorState<T> extends State<_TrainingSelector<T>> {
       child: Container(
         height: MediaQuery.sizeOf(context).height * 0.62,
         decoration: const BoxDecoration(
-          color: Color(0xFF050507),
+          color: AppColors.background,
           borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
         ),
         child: Column(
@@ -112,7 +114,7 @@ class _TrainingSelectorState<T> extends State<_TrainingSelector<T>> {
                     height: 74,
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: const BoxDecoration(
-                      color: Color(0xFF281421),
+                      color: AppColors.cardActive,
                       borderRadius: BorderRadius.all(Radius.circular(8)),
                     ),
                   ),
@@ -197,7 +199,7 @@ class _WheelOption extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: selected
-                  ? const Color(0xFFFFB0CB)
+                  ? AppColors.primaryStrong
                   : const Color(0xFF3B3F4D),
               fontSize: 12,
               fontWeight: FontWeight.w700,
@@ -220,10 +222,10 @@ class _WheelFadeBackground extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFF050507),
-            Color(0xFF11182B),
-            Color(0xFF11182B),
-            Color(0xFF050507),
+            AppColors.background,
+            Color(0xFF151515),
+            Color(0xFF151515),
+            AppColors.background,
           ],
           stops: [0, 0.38, 0.62, 1],
         ),
