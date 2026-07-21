@@ -136,6 +136,27 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
     }
   }
 
+  void _resetSessionForSettingsChange() {
+    _timer?.cancel();
+    final drill = _generator.generate(
+      mode: _mode,
+      cueSet: _cueSet,
+      minLength: _comboMinLength,
+      maxLength: _comboMaxLength,
+    );
+
+    setState(() {
+      _isRunning = false;
+      _isPaused = false;
+      _secondsLeft = _refreshSeconds;
+      _currentDrill = drill;
+      _history.clear();
+      _generatedCount = 0;
+      _sessionSeconds = 0;
+      _pauseCount = 0;
+    });
+  }
+
   Future<void> _openModeSelector() async {
     final selected = await showTrainingSelector<TrainingMode>(
       context: context,
@@ -161,7 +182,7 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
         _cueSet = DefenseCueSet.common;
       }
     });
-    _generateNext();
+    _resetSessionForSettingsChange();
   }
 
   Future<void> _openTempoSelector() async {
@@ -185,6 +206,7 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
       _refreshSeconds = selected;
       _secondsLeft = selected;
     });
+    _resetSessionForSettingsChange();
   }
 
   Future<void> _openLengthSelector() async {
@@ -219,7 +241,7 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
       _comboMinLength = selected.start.round();
       _comboMaxLength = selected.end.round();
     });
-    _generateNext();
+    _resetSessionForSettingsChange();
   }
 
   Future<void> _openCueSelector() async {
@@ -246,7 +268,7 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
         _secondsLeft = _refreshSeconds;
       }
     });
-    _generateNext();
+    _resetSessionForSettingsChange();
   }
 
   void _toggleSignedIn() {
@@ -304,7 +326,7 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 14, 14, 0),
+          padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
           child: PageView(
             controller: _pageController,
             onPageChanged: (index) => setState(() => _selectedTab = index),
@@ -364,8 +386,14 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
       onTempoTap: _openTempoSelector,
       onLengthTap: _openLengthSelector,
       onCueTap: _openCueSelector,
-      onSoundChanged: (value) => setState(() => _soundEnabled = value),
-      onVoiceChanged: (value) => setState(() => _voiceEnabled = value),
+      onSoundChanged: (value) {
+        setState(() => _soundEnabled = value);
+        _resetSessionForSettingsChange();
+      },
+      onVoiceChanged: (value) {
+        setState(() => _voiceEnabled = value);
+        _resetSessionForSettingsChange();
+      },
       onSavePressed: _saveForAccount,
     );
   }

@@ -28,6 +28,32 @@ class BoxgenApp extends StatelessWidget {
           backgroundColor: AppColors.card,
           contentTextStyle: TextStyle(color: Colors.white),
         ),
+        navigationBarTheme: NavigationBarThemeData(
+          height: 64,
+          elevation: 0,
+          backgroundColor: AppColors.background,
+          indicatorColor: AppColors.cardActive,
+          iconTheme: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const IconThemeData(color: AppColors.text, size: 22);
+            }
+            return const IconThemeData(color: AppColors.textMuted, size: 21);
+          }),
+          labelTextStyle: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return const TextStyle(
+                color: AppColors.text,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+              );
+            }
+            return const TextStyle(
+              color: AppColors.textMuted,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+            );
+          }),
+        ),
       ),
       home: const BoxingHomePage(),
     );
