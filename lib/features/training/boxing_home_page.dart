@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
+import '../../app/app_colors.dart';
 import '../../models/defense_cue_set.dart';
 import '../../models/generated_drill.dart';
 import '../../models/training_mode.dart';
@@ -23,7 +24,9 @@ class BoxingHomePage extends StatefulWidget {
   State<BoxingHomePage> createState() => _BoxingHomePageState();
 }
 
-const double _maxAppWidth = 460;
+const double _mobileBreakpoint = 600;
+const double _tabletBreakpoint = 1024;
+const double _maxContentWidth = 520;
 
 class _BoxingHomePageState extends State<BoxingHomePage> {
   final _generator = BoxingComboGenerator();
@@ -391,54 +394,99 @@ class _BoxingHomePageState extends State<BoxingHomePage> {
   @override
   Widget build(BuildContext context) {
     final pages = [
-      _buildTrainingPage(),
-      _buildSetupPage(),
-      _buildAccountPage(),
-      _buildStatsPage(),
+      _centeredPage(_buildTrainingPage()),
+      _centeredPage(_buildSetupPage()),
+      _centeredPage(_buildAccountPage()),
+      _centeredPage(_buildStatsPage()),
     ];
 
     return Scaffold(
+      backgroundColor: AppColors.surface,
       body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: _maxAppWidth),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (index) => setState(() => _selectedTab = index),
-                children: pages,
-              ),
-            ),
+        child: DecoratedBox(
+          decoration: const BoxDecoration(color: AppColors.surface),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final horizontalPadding = _horizontalPaddingFor(
+                constraints.maxWidth,
+              );
+
+              return Padding(
+                padding: EdgeInsets.fromLTRB(
+                  horizontalPadding,
+                  14,
+                  horizontalPadding,
+                  0,
+                ),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: PageView(
+                        controller: _pageController,
+                        onPageChanged: (index) =>
+                            setState(() => _selectedTab = index),
+                        children: pages,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _buildNavigationBar(),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),
-      bottomNavigationBar: Center(
-        heightFactor: 1,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: _maxAppWidth),
-          child: NavigationBar(
-            selectedIndex: _selectedTab,
-            onDestinationSelected: _selectTab,
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.sports_mma_rounded),
-                label: 'Training',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.tune_rounded),
-                label: 'Setup',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.person_rounded),
-                label: 'Account',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.insights_rounded),
-                label: 'Stats',
-              ),
-            ],
-          ),
+    );
+  }
+
+  double _horizontalPaddingFor(double width) {
+    if (width < _mobileBreakpoint) {
+      return 0;
+    }
+    if (width < _tabletBreakpoint) {
+      return 24;
+    }
+    return 40;
+  }
+
+  Widget _centeredPage(Widget child) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _maxContentWidth),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavigationBar() {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _maxContentWidth),
+        child: NavigationBar(
+          selectedIndex: _selectedTab,
+          onDestinationSelected: _selectTab,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.sports_mma_rounded),
+              label: 'Training',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.tune_rounded),
+              label: 'Setup',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person_rounded),
+              label: 'Account',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.insights_rounded),
+              label: 'Stats',
+            ),
+          ],
         ),
       ),
     );

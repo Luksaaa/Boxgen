@@ -31,7 +31,7 @@ class BoxgenApp extends StatelessWidget {
         navigationBarTheme: NavigationBarThemeData(
           height: 64,
           elevation: 0,
-          backgroundColor: AppColors.background,
+          backgroundColor: AppColors.surface,
           indicatorColor: AppColors.cardActive,
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
