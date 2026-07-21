@@ -6,6 +6,9 @@ void main() {
   testWidgets('Boxgen renders training controls and mode selector', (
     tester,
   ) async {
+    await tester.binding.setSurfaceSize(const Size(1200, 900));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
     await tester.pumpWidget(const BoxgenApp());
 
     expect(find.text('BOXGEN'), findsOneWidget);
